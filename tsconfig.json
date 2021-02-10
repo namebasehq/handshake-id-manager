@@ -1,0 +1,41 @@
+{
+	"extends": "@tsconfig/svelte/tsconfig.json",
+	"compilerOptions": {
+		"lib": [
+			"DOM",
+			"webworker",
+			"ES2018",
+			"ESNext"
+		],
+		"target": "es2017",
+		"allowSyntheticDefaultImports": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importsNotUsedAsValues": "error",
+		"isolatedModules": false,
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"strict": false,
+		"types": [
+			"svelte",
+			"node"
+		],
+	},
+	"include": [
+		"src/*",
+		"src/*.ts",
+		"src/**/*",
+		"src/**/*.ts",
+		"src/node_modules",
+		"src/node_modules/**/*",
+		".eslintrc.js",
+		"rollup.config.js",
+		"svelte.config.js"
+	],
+	"exclude": [
+		"node_modules/*",
+		"__sapper__/*",
+		"public/*",
+		"static/*"
+	]
+}
