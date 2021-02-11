@@ -1,50 +1,45 @@
-<script>
-	import successkid from 'images/successkid.jpg';
+<script lang="ts" context="module">
+	import { goto } from '@sapper/app';
+
+	import url from '../url';
+	import { onMount } from 'svelte';
+	import login from './login.svelte';
+	import list from './list.svelte';
+	import create from './create.svelte';
 </script>
 
-<style>
-	h1, figure, p {
-		text-align: center;
-		margin: 0 auto;
-	}
+<script lang="ts">
+	const queryIndex = $url.hash.indexOf('?');
+	const path = $url.hash.substr(2, queryIndex > -1 ? queryIndex : $url.hash.length);
+	const query =
+		queryIndex === -1
+			? []
+			: $url.hash
+					.substr(queryIndex + 1)
+					.split('&')
+					.reduce((a, b) => {
+						const y = b.split('=');
+						const obj = {};
+						obj[y[0]] = y[1] ?? true;
+						return { ...a, ...obj };
+					}, []);
 
-	h1 {
-		font-size: 2.8em;
-		text-transform: uppercase;
-		font-weight: 700;
-		margin: 0 0 0.5em 0;
-	}
-
-	figure {
-		margin: 0 0 1em 0;
-	}
-
-	img {
-		width: 100%;
-		max-width: 400px;
-		margin: 0 0 1em 0;
-	}
-
-	p {
-		margin: 1em auto;
-	}
-
-	@media (min-width: 480px) {
-		h1 {
-			font-size: 4em;
+	onMount(() => {
+		if (!path) {
+			goto('/#/list');
 		}
-	}
-</style>
+	});
+</script>
 
 <svelte:head>
-	<title>Sapper project template</title>
+	<title>Handshake Login</title>
 </svelte:head>
-
-<h1>Great success!</h1>
-
-<figure>
-	<img alt="Success Kid" src="{successkid}">
-	<figcaption>Have fun with Sapper!</figcaption>
-</figure>
-
-<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>
+{#if $url.hash.startsWith('#/login')}
+	<svelte:component this={login} {query} />
+{:else if $url.hash.startsWith('#/create')}
+	<svelte:component this={create} {query} />
+{:else if $url.hash.startsWith('#/list')}
+	<svelte:component this={list} {query} />
+{:else}
+	<div />
+{/if}

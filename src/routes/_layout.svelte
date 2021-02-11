@@ -1,8 +1,9 @@
-<script>
-	import Nav from '../components/Nav.svelte';
-
-	export let segment;
+<script lang="ts">
 </script>
+
+<main>
+	<slot />
+</main>
 
 <style>
 	main {
@@ -14,9 +15,3 @@
 		box-sizing: border-box;
 	}
 </style>
-
-<Nav {segment}/>
-
-<main>
-	<slot></slot>
-</main>
