@@ -1,15 +1,12 @@
 <script lang="ts" context="module">
-	import { stores } from '@sapper/app';
-
 	import { onMount } from 'svelte';
 	import identityService from '../identity/IdentityService';
-	import type { Identity } from '../identity/IdentityModels';
 </script>
 
 <script lang="ts">
-	let name: string = '';
-	const atob = (str) => Buffer.from(str, 'base64').toString('binary');
+	export let query: Record<string, string>;
 
+	let name: string = '';
 	onMount(async () => {});
 
 	const create = async () => {
@@ -20,15 +17,16 @@
 		const tld = splitDomain.pop();
 		const host = ['_auth', ...splitDomain].join('.');
 		const records = [
-			{ type: 'TXT', host: host, value: 'authv=0;fingerprint=' + identity.fingerprint, ttl: 60 },
+			{ type: 'TXT', host: host, value: 'v=0;fingerprint=' + identity.fingerprint, ttl: 60 },
 		];
-		const redirectUrl =
-			window.location.protocol +
-			'//' +
-			window.location.host +
-			'/#/login' +
-			'?id=' +
-			btoa(identity.name);
+		const redirectUrl = query.redirect
+			? atob(query.redirect)
+			: window.location.protocol +
+			  '//' +
+			  window.location.host +
+			  '/#/login' +
+			  '?id=' +
+			  btoa(identity.name);
 		const url = new URL(`${baseDomain()}/next/domain-manager/${tld}/records`);
 		url.searchParams.append('records', btoa(JSON.stringify(records)));
 		url.searchParams.append(
