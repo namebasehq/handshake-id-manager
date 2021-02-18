@@ -1,19 +1,18 @@
 <script lang="ts" context="module">
 	import type { HashbrownContext } from '@Hashbrown';
-	import { goto } from '@sapper/app';
 	import { getContext, onMount } from 'svelte';
 	import DeviceService from '../../device/DeviceService';
 	import IdentityService from '../../identity/IdentityService';
 </script>
 
 <script lang="ts">
-	const { query } = getContext<HashbrownContext>('router');
+	const { query, goto } = getContext<HashbrownContext>('router');
 
 	const identityService = IdentityService.InstanceSecure('test');
 
 	onMount(async () => {
 		if (!$query.id || !$query.state || !$query.callbackUrl) {
-			goto('/#/list');
+			goto('/list');
 		}
 
 		HTMLFormElement.prototype.addInput = function (name: string, value: string) {
@@ -28,7 +27,7 @@
 			atob($query.state),
 		);
 		if (!credentials) {
-			goto('/#/create?redirect=' + btoa(window.location.href));
+			goto('/create?redirect=' + btoa(window.location.href));
 		}
 		const url = new URL(atob($query.callbackUrl));
 		const data = {

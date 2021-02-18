@@ -59,11 +59,20 @@
 		}
 	});
 
+	const routerGoto = (newPath: string) => {
+		if (newPath.startsWith('/#')) {
+			goto(newPath);
+		} else {
+			goto(`/#${newPath}`);
+		}
+	};
+
 	$: if (!$writeablePath) {
-		if (typeof window !== 'undefined') goto(`/#${$$props.default}`);
+		if (typeof window !== 'undefined') routerGoto($$props.default);
 	}
 
 	setContext<HashbrownContext>('router', {
+		goto: routerGoto,
 		path: writeablePath,
 		hash: writeableHash,
 		query: writeableQuery,
