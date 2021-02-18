@@ -1,9 +1,8 @@
 <script lang="ts" context="module">
 	import { stores } from '@sapper/app';
-
 	import { onMount } from 'svelte';
-	import IdentityService from '../identity/IdentityService';
-	import type { Identity } from '../identity/IdentityModels';
+	import type { Identity } from '../../identity/IdentityModels';
+	import IdentityService from '../../identity/IdentityService';
 </script>
 
 <script lang="ts">

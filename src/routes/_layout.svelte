@@ -1,17 +1,31 @@
-<script lang="ts">
+<script context="module" lang="ts">
+	import HandshakeLogoIcon from '@components/HandshakeLogoIcon.svelte';
+	import { AnnouncementContextProvider } from '@providers/announcement';
 </script>
 
-<main>
-	<slot />
-</main>
+<AnnouncementContextProvider>
+	<main>
+		<div class="handshake-logo">
+			<HandshakeLogoIcon />
+		</div>
+		<slot />
+	</main>
+</AnnouncementContextProvider>
 
 <style>
 	main {
-		position: relative;
-		max-width: 56em;
-		background-color: white;
-		padding: 2em;
+		width: 392px;
 		margin: 0 auto;
-		box-sizing: border-box;
+		max-width: 100%;
+		position: relative;
+		margin-top: 136px;
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.handshake-logo {
+		width: max-content;
+		margin: 0 auto;
+		padding-bottom: 32px;
 	}
 </style>

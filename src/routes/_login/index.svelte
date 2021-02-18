@@ -1,8 +1,8 @@
 <script lang="ts" context="module">
 	import { goto } from '@sapper/app';
 	import { onMount } from 'svelte';
-	import IdentityService from '../identity/IdentityService';
-	import DeviceService from '../device/DeviceService';
+	import DeviceService from '../../device/DeviceService';
+	import IdentityService from '../../identity/IdentityService';
 </script>
 
 <script lang="ts">

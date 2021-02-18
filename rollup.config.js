@@ -28,7 +28,7 @@ const aliases = alias({
 	entries: [
 		{ find: '@components', replacement: path.resolve(__dirname, 'src/components') },
 		{ find: '@Hashbrown', replacement: path.resolve(__dirname, 'src/packages/Hashbrown') },
-		// { find: '@providers', replacement: path.resolve(__dirname, "src/providers") },
+		{ find: '@providers', replacement: path.resolve(__dirname, "src/providers") },
 	],
 });
 

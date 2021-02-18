@@ -23,8 +23,6 @@
 			const updateWriteables = () => {
 				const queryIndex = window.location.hash.indexOf('?');
 
-				console.log('updating writeables');
-
 				writeableHash.set(window.location.hash);
 				writeablePath.set(
 					window.location.hash.substr(
@@ -51,7 +49,6 @@
 				updateWriteables();
 			};
 			history.replaceState = function () {
-				console.log('here');
 				originalReplaceState.apply(this, arguments);
 				updateWriteables();
 			};

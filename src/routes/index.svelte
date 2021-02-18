@@ -1,8 +1,8 @@
 <script lang="ts" context="module">
 	import { Route, Router } from '@Hashbrown';
-	import Create from './create.svelte';
-	import List from './list.svelte';
-	import Login from './login.svelte';
+	import Create from './_create/index.svelte';
+	import List from './_list/index.svelte';
+	import Login from './_login/index.svelte';
 </script>
 
 <svelte:head>
