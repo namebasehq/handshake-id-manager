@@ -23,8 +23,11 @@ const onwarn = (warning, onwarn) =>
 	warning.code === 'THIS_IS_UNDEFINED' ||
 	onwarn(warning);
 
+const customResolver = resolve({
+	extensions: ['.svelte', '.js', '.ts', '.d.ts']
+});
 const aliases = alias({
-	resolve: ['.svelte', '.js', '.ts', '.d.ts'],
+	customResolver,
 	entries: [
 		{ find: '@components', replacement: path.resolve(__dirname, 'src/components') },
 		{ find: '@Hashbrown', replacement: path.resolve(__dirname, 'src/packages/Hashbrown') },
