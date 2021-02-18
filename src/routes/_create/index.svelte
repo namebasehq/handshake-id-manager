@@ -1,11 +1,13 @@
 <script lang="ts" context="module">
-	import { onMount } from 'svelte';
+	import type { HashbrownContext } from '@Hashbrown';
+	import { getContext, onMount } from 'svelte';
 	import DeviceService from '../../device/DeviceService';
 	import IdentityService from '../../identity/IdentityService';
 </script>
 
 <script lang="ts">
-	export let query: Record<string, string>;
+	const { query } = getContext<HashbrownContext>('router');
+
 	const identityService = IdentityService.InstanceSecure('test');
 	let name: string = '';
 	onMount(async () => {});
@@ -20,14 +22,10 @@
 		const records = [
 			{ type: 'TXT', host: host, value: 'v=0;fingerprint=' + identity.fingerprint, ttl: 60 },
 		];
-		const redirectUrl = query.redirect
-			? atob(query.redirect)
-			: window.location.protocol +
-			  '//' +
-			  window.location.host +
-			  '/#/login' +
-			  '?id=' +
-			  btoa(identity.name);
+		const redirectUrl = $query.redirect
+			? atob($query.redirect)
+			: `${window.location.protocol}//${window.location.host}/#/login?id=${btoa(identity.name)}`;
+
 		const url = new URL(`${baseDomain()}/next/domain-manager/${tld}/records`);
 		url.searchParams.append('records', btoa(JSON.stringify(records)));
 		url.searchParams.append(
