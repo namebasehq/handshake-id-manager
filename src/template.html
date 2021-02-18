@@ -1,33 +1,27 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<meta name="theme-color" content="#333333">
+  <meta charset='utf-8'>
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Namebase" />
+  <meta property="twitter:site" content="@namebasehq" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	%sapper.base%
 
 	<link rel="stylesheet" href="global.css">
-	<link rel="manifest" href="manifest.json" crossorigin="use-credentials">
 	<link rel="icon" type="image/png" href="favicon.png">
 
-	<!-- Sapper creates a <script> tag containing `src/client.js`
-	     and anything else it needs to hydrate the app and
-	     initialise the router -->
+  <link rel="preload" as="font" href="RobotoMono-regular.woff" type="font/woff" crossorigin />
+  <link rel="preload" as="font" href="RobotoVariable-subset.woff2" type="font/woff2" crossorigin />
+
 	%sapper.scripts%
-
-	<!-- Sapper generates a <style> tag containing critical CSS
-	     for the current page. CSS for the rest of the app is
-	     lazily loaded when it precaches secondary pages -->
 	%sapper.styles%
-
-	<!-- This contains the contents of the <svelte:head> component, if
-	     the current page has one -->
 	%sapper.head%
 </head>
 <body>
-	<!-- The application will be rendered inside this element,
-	     because `src/client.js` references it -->
 	<div id="sapper">%sapper.html%</div>
 </body>
 </html>
