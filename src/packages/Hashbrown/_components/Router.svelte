@@ -30,17 +30,17 @@
 						queryIndex > -1 ? queryIndex : window.location.hash.length,
 					),
 				);
+
 				writeableQuery.update(() => {
 					if (queryIndex === -1) return {};
-					return window.location.hash
-						.substr(queryIndex + 1)
-						.split('&')
-						.reduce((a, b) => {
-							const y = b.split('=');
-							const obj = {};
-							obj[y[0]] = y[1] ?? true;
-							return { ...a, ...obj };
-						}, []);
+					const regex = /([^&=]+)=([^=&]*)/g;
+					const params: Record<string, any> = {};
+					const hash = window.location.hash.substr(queryIndex + 1);
+					let match: RegExpExecArray = null;
+					while ((match = regex.exec(hash))) {
+						params[match[1]] = match[2];
+					}
+					return params;
 				});
 			};
 
