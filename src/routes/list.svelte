@@ -2,14 +2,14 @@
 	import { stores } from '@sapper/app';
 
 	import { onMount } from 'svelte';
-	import identityService from '../identity/IdentityService';
+	import IdentityService from '../identity/IdentityService';
 	import type { Identity } from '../identity/IdentityModels';
 </script>
 
 <script lang="ts">
 	const { page } = stores();
 	const { host, path, params, query } = $page;
-	const atob = (str) => Buffer.from(str, 'base64').toString('binary');
+	const identityService = IdentityService.InstanceSecure('test');
 
 	let identities: Identity[] = [];
 	onMount(async () => {

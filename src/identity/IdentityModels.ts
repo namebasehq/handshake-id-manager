@@ -15,3 +15,5 @@ export class Identity implements IIdentity {
         Object.assign(this, params);
     }
 }
+
+export const STORAGE_PREFIX = "identity_";

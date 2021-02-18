@@ -9,6 +9,7 @@
       "dependencies": {
         "compression": "^1.7.4",
         "polka": "next",
+        "secure-ls": "^1.2.6",
         "sirv": "^1.0.11"
       },
       "devDependencies": {
@@ -1854,6 +1855,11 @@
         "semver": "bin/semver.js"
       }
     },
+    "node_modules/crypto-js": {
+      "version": "3.3.0",
+      "resolved": "https://registry.npmjs.org/crypto-js/-/crypto-js-3.3.0.tgz",
+      "integrity": "sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q=="
+    },
     "node_modules/debug": {
       "version": "4.3.1",
       "resolved": "https://registry.npmjs.org/debug/-/debug-4.3.1.tgz",
@@ -2294,6 +2300,14 @@
       "resolved": "https://registry.npmjs.org/lower-case/-/lower-case-1.1.4.tgz",
       "integrity": "sha1-miyr0bno4K6ZOkv31YdcOcQujqw=",
       "dev": true
+    },
+    "node_modules/lz-string": {
+      "version": "1.4.4",
+      "resolved": "https://registry.npmjs.org/lz-string/-/lz-string-1.4.4.tgz",
+      "integrity": "sha1-wNjq82BZ9wV5bh40SBHPTEmNOiY=",
+      "bin": {
+        "lz-string": "bin/bin.js"
+      }
     },
     "node_modules/magic-string": {
       "version": "0.25.7",
@@ -2781,6 +2795,15 @@
       "dev": true,
       "engines": {
         "node": ">=0.10.0"
+      }
+    },
+    "node_modules/secure-ls": {
+      "version": "1.2.6",
+      "resolved": "https://registry.npmjs.org/secure-ls/-/secure-ls-1.2.6.tgz",
+      "integrity": "sha512-g8vUSKl6elSfyAUHodybnNkuZW+mUYEOWj4SZIDg+xoQ1dq5ddktBoOFrtxQBUl88ZyAJOtGWQ1PRaOxkTAuZQ==",
+      "dependencies": {
+        "crypto-js": "^3.1.6",
+        "lz-string": "^1.4.4"
       }
     },
     "node_modules/semver": {
@@ -4740,6 +4763,11 @@
         }
       }
     },
+    "crypto-js": {
+      "version": "3.3.0",
+      "resolved": "https://registry.npmjs.org/crypto-js/-/crypto-js-3.3.0.tgz",
+      "integrity": "sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q=="
+    },
     "debug": {
       "version": "4.3.1",
       "resolved": "https://registry.npmjs.org/debug/-/debug-4.3.1.tgz",
@@ -5062,6 +5090,11 @@
       "resolved": "https://registry.npmjs.org/lower-case/-/lower-case-1.1.4.tgz",
       "integrity": "sha1-miyr0bno4K6ZOkv31YdcOcQujqw=",
       "dev": true
+    },
+    "lz-string": {
+      "version": "1.4.4",
+      "resolved": "https://registry.npmjs.org/lz-string/-/lz-string-1.4.4.tgz",
+      "integrity": "sha1-wNjq82BZ9wV5bh40SBHPTEmNOiY="
     },
     "magic-string": {
       "version": "0.25.7",
@@ -5441,6 +5474,15 @@
           "integrity": "sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==",
           "dev": true
         }
+      }
+    },
+    "secure-ls": {
+      "version": "1.2.6",
+      "resolved": "https://registry.npmjs.org/secure-ls/-/secure-ls-1.2.6.tgz",
+      "integrity": "sha512-g8vUSKl6elSfyAUHodybnNkuZW+mUYEOWj4SZIDg+xoQ1dq5ddktBoOFrtxQBUl88ZyAJOtGWQ1PRaOxkTAuZQ==",
+      "requires": {
+        "crypto-js": "^3.1.6",
+        "lz-string": "^1.4.4"
       }
     },
     "semver": {

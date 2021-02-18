@@ -1,13 +1,17 @@
 import { CryptoWrapper } from './CryptoWrapper';
 import IdentityRepository from './IdentityRepository';
-import type { Identity, IIdentity } from './IdentityModels';
+import type { IIdentity } from './IdentityModels';
+import IdentityRepositorySecureLS from './IdentityRepositorySecureLS';
+import SecureLS from 'secure-ls';
 
 
-class IdentityService {
+export default class IdentityService {
 
-  private static _Instance: IdentityService = null;
-  public static get Instance(): IdentityService {
-    return this._Instance ?? (this._Instance = new IdentityService(new CryptoWrapper(), new IdentityRepository()))
+  public static Instance(): IdentityService {
+    return new IdentityService(new CryptoWrapper(), new IdentityRepository());
+  };
+  public static InstanceSecure(passphrase: string): IdentityService {
+    return new IdentityService(new CryptoWrapper(), new IdentityRepositorySecureLS(new SecureLS({ encodingType: 'des', isCompression: true, encryptionSecret: passphrase })));
   };
 
 
@@ -46,10 +50,8 @@ class IdentityService {
 
   async fetchAllIdentityName(): Promise<IIdentity[]> {
     const identities = await this.store.getAll();
-    return Object.keys(identities).map((o) => {
-      console.log({ i: identities[o] });
-      return <Identity>{ name: atob(o), fingerprint: identities[o].fingerprint };
-    });
+    return identities.map(i => <IIdentity>{ name: i.name, fingerprint: i.fingerprint });
+
   }
 
   async GetIdentityByName(name: string): Promise<IIdentity> {
@@ -67,5 +69,3 @@ class IdentityService {
     }
   }
 }
-
-export default IdentityService.Instance;

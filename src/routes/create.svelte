@@ -1,11 +1,12 @@
 <script lang="ts" context="module">
 	import { onMount } from 'svelte';
-	import identityService from '../identity/IdentityService';
+	import IdentityService from '../identity/IdentityService';
+	import DeviceService from '../device/DeviceService';
 </script>
 
 <script lang="ts">
 	export let query: Record<string, string>;
-
+	const identityService = IdentityService.InstanceSecure('test');
 	let name: string = '';
 	onMount(async () => {});
 
@@ -13,9 +14,9 @@
 		const baseDomain = () => (window as any).baseDomain || 'https://www.namebase.io';
 
 		const identity = await identityService.generateIndentity(name);
-		const splitDomain = identity.name.split('.');
+		const splitDomain = `${identity.name}`.split('.');
 		const tld = splitDomain.pop();
-		const host = ['_auth', ...splitDomain].join('.');
+		const host = [DeviceService.getDeviceId(), '_auth', ...splitDomain].join('.');
 		const records = [
 			{ type: 'TXT', host: host, value: 'v=0;fingerprint=' + identity.fingerprint, ttl: 60 },
 		];

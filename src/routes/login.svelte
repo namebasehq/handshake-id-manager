@@ -1,14 +1,19 @@
 <script lang="ts" context="module">
 	import { goto } from '@sapper/app';
-
 	import { onMount } from 'svelte';
-	import identityService from '../identity/IdentityService';
+	import IdentityService from '../identity/IdentityService';
+	import DeviceService from '../device/DeviceService';
 </script>
 
 <script lang="ts">
 	export let query: Record<string, string>;
+	const identityService = IdentityService.InstanceSecure('test');
 
 	onMount(async () => {
+		if (!query.id || !query.state || !query.callbackUrl) {
+			goto('/#/list');
+		}
+
 		HTMLFormElement.prototype.addInput = function (name: string, value: string) {
 			const input = document.createElement('input');
 			input.setAttribute('type', 'hidden');
@@ -23,20 +28,15 @@
 		if (!credentials) {
 			goto('/#/create?redirect=' + btoa(window.location.href));
 		}
-		const body = document.getElementsByTagName('body')[0];
-		const form = document.createElement('form');
-		const url = new URL(atob(query.referrer));
-		url.pathname = atob(query.action);
-		form.setAttribute('action', url.toString());
-		form.setAttribute('method', 'GET');
-		form.setAttribute('enctype', 'application/x-www-form-urlencoded');
-		form.addInput('publicKey', btoa(credentials.publicKey));
-		form.addInput('signed', btoa(credentials.signed));
-		form.addInput('domain', btoa(credentials.name));
-
-		body.appendChild(form);
-
-		form.submit();
+		const url = new URL(atob(query.callbackUrl));
+		const data = {
+			publicKey: btoa(credentials.publicKey),
+			signed: btoa(credentials.signed),
+			domain: btoa(credentials.name),
+			deviceId: btoa(DeviceService.getDeviceId()),
+		};
+		url.hash = btoa(JSON.stringify(data));
+		goto(url.toString());
 	});
 </script>
 
