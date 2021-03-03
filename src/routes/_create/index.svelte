@@ -42,7 +42,7 @@
   let loading: boolean = false;
   let firstTimeUser: boolean = true;
   let identityToCreate: string = $loginFlowData.id;
-
+  let identityCreated: boolean = false;
   onMount(() => {
     if ($loginFlowData.id) {
       identityToCreate = $loginFlowData.id;
@@ -96,13 +96,30 @@
   };
 
   const continueToLogin = async () => {
-    await identities.generate(normalizeDomainName(identityToCreate));
     const redirectUrl = getRedirectUrl(
       $loginFlowData.id,
       $loginFlowData.state,
       $loginFlowData.callbackUrl,
     );
     window.location.href = redirectUrl.toString();
+  };
+
+  const createAndCopyRecord = async () => {
+    const identity = await identities.generate(normalizeDomainName(identityToCreate));
+    identityCreated = true;
+    const identityParts = `${identity.name}`.split('.');
+
+    const tld = identityParts.pop();
+    const host = [deviceId, '_auth', ...identityParts].join('.');
+    const records = [
+      {
+        host,
+        ttl: 60,
+        type: 'TXT',
+        value: `v=0;fingerprint=${identity.fingerprint}`,
+      },
+    ];
+    navigator.clipboard.writeText(JSON.stringify(records));
   };
 </script>
 
@@ -163,9 +180,15 @@
     <p class="text-variant-tiny text-roboto-variable text-weight-regular">
       Once you have set your record, click the button below to continue.
     </p>
-    <Button onClick={continueToLogin} variant="secondary" disabled={loading}>
-      I set my record
-    </Button>
+    {#if identityCreated}
+      <Button onClick={continueToLogin} variant="secondary" disabled={loading}>
+        I set my record
+      </Button>
+    {:else}
+      <Button onClick={createAndCopyRecord} variant="secondary" disabled={loading}>
+        Copy my record
+      </Button>
+    {/if}
   </div>
 {/if}
 
