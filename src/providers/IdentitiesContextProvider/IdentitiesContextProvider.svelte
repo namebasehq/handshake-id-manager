@@ -69,10 +69,15 @@
     }
     const isFingerprintValid = await identityService.verifyFingerPrint(
       identity.fingerprint,
+      await getPrefix(name),
       name,
-      DeviceService.getDeviceId(),
     );
     return isFingerprintValid;
+  };
+
+  const getPrefix: IdentitiesContext['getPrefix'] = async (name: string) => {
+    const prefix = await identityService.hash(name + DeviceService.getDeviceId());
+    return prefix.substr(0, 16);
   };
 
   setContext<IdentitiesContext>('identities', {
@@ -81,6 +86,7 @@
     generate,
     credentialsFor,
     verifyFingerprintFor,
+    getPrefix,
   });
 </script>
 

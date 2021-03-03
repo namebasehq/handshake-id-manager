@@ -19,7 +19,8 @@ declare module '@services/identity' {
     signAndGetpublicKey: (name: string, hnsRandom: string) => Promise<SignedPublicKey>;
     fetchAllIdentityName: () => Promise<IIdentity[]>;
     fetchAllIdentityName: () => Promise<IIdentity[]>;
-    verifyFingerPrint: (fingerprint, name, deviceId) => Promise<boolean>;
+    verifyFingerPrint: (fingerprint, prefix, name) => Promise<boolean>;
+    hash: (text: string) => Promise<string>;
   }
 
   export { IdentityService };

@@ -118,10 +118,11 @@ export class Crypto {
     );
   }
 
-  async generateFingerprint(publicKey: string) {
-    const fingerprint = await crypto.subtle.digest('SHA-256', this._enc.encode(publicKey));
+  async hash(text: string) {
+    const fingerprint = await crypto.subtle.digest('SHA-256', this._enc.encode(text));
     const hashArray = Array.from(new Uint8Array(fingerprint));
     const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
     return hashHex;
   }
+
 }

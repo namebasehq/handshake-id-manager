@@ -34,7 +34,7 @@
   const loadingContext = getContext<LoadingContext>('loading');
 
   const identities = getContext<IdentitiesContext>('identities');
-  const { deviceId, media } = getContext<MediaContext>('media');
+  const { media } = getContext<MediaContext>('media');
   const loginFlowData = loginFlowContext.loginFlowData;
 
   let { list } = identities;
@@ -57,9 +57,14 @@
   };
 
   const getRedirectUrl = (name: string, state: string, callbackUrl: string): string => {
-    let redirectUrl: string = `${PROTOCOL()}//${HOST()}/#/login?id=${btoa(name)}&state=${btoa(
-      state,
-    )}&callbackUrl=${btoa(callbackUrl)}`;
+    let redirectUrl: string = `${PROTOCOL()}//${HOST()}/#/login?id=${btoa(name)}`;
+    if (state) {
+      redirectUrl += `&state=${btoa(state)}`;
+    }
+    if (callbackUrl) {
+      redirectUrl += `&callbackUrl=${btoa(callbackUrl)}`;
+    }
+
     return redirectUrl.toString();
   };
 
@@ -70,7 +75,8 @@
     const identityParts = `${newIdentity.name}`.split('.');
 
     const tld = identityParts.pop();
-    const host = [deviceId, '_auth', ...identityParts].join('.');
+    const prefix = await identities.getPrefix(newIdentity.name);
+    const host = [prefix, '_auth', ...identityParts].join('.');
     const records = [
       {
         host,
@@ -110,7 +116,8 @@
     const identityParts = `${identity.name}`.split('.');
 
     const tld = identityParts.pop();
-    const host = [deviceId, '_auth', ...identityParts].join('.');
+    const prefix = await identities.getPrefix(identity.name);
+    const host = [prefix, '_auth', ...identityParts].join('.');
     const records = [
       {
         host,
@@ -178,7 +185,7 @@
       </a>
     </p>
     <p class="text-variant-tiny text-roboto-variable text-weight-regular">
-      Once you have set your record, click the button below to continue.
+      Click the button below to copy your record, then click it again after you have set it.
     </p>
     {#if identityCreated}
       <Button onClick={continueToLogin} variant="secondary" disabled={loading}>

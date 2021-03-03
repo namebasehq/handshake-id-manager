@@ -34,7 +34,7 @@ class IdentityService {
       name: name,
       publicKey: publicKeyString,
       privateKey: await this.cryptoWrapper.exportPrivateCryptoKey(privateKey),
-      fingerprint: await this.cryptoWrapper.generateFingerprint(publicKeyString),
+      fingerprint: await this.cryptoWrapper.hash(publicKeyString),
     };
 
     await this.store.set(identity.name, identity);
@@ -124,12 +124,17 @@ class IdentityService {
     }
   }
 
-  async verifyFingerPrint(fingerprint, name, deviceId): Promise<boolean> {
-    const txts = await this.getRecordsAsync('TXT', `${deviceId}._auth.${name}`);
-    const result = txts.find((p) => p.fingerprint === fingerprint);
-    return result ? true : false;
-  }
+  
 
+  async verifyFingerPrint(fingerprint, prefix, name): Promise<boolean> {
+    const isValid = await fetch(`https://oidc.namebase.io/validate?id=${btoa(name)}&deviceId=${btoa(prefix)}&fp=${btoa(fingerprint)}`);
+    return (await isValid.json()).success;
+    // // TODO: enable when DOH is stable
+    // const txts = await this.getRecordsAsync('TXT', `${prefix}._auth.${name}`);
+    // const result = txts.find((p) => p.fingerprint === fingerprint);
+    // return result ? true : false;
+  }
+  
   async deleteIdentity(name: string): Promise<boolean> {
     name = name.toLowerCase();
     try {
@@ -138,6 +143,10 @@ class IdentityService {
     } catch (e) {
       return false;
     }
+  }
+
+  async hash(text: string){
+    return await this.cryptoWrapper.hash(text);
   }
 }
 

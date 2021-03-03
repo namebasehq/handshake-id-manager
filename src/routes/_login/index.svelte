@@ -1,4 +1,5 @@
 <script lang="ts" context="module">
+  import Button from '@components/Button.svelte';
   import type { HashbrownContext } from '@Hashbrown';
   import type { IdentitiesContext } from '@providers/identities';
   import type { LoadingContext } from '@providers/loading';
@@ -10,20 +11,60 @@
 <script lang="ts">
   const identities = getContext<IdentitiesContext>('identities');
   const loading = getContext<LoadingContext>('loading');
+  const { media } = getContext<MediaContext>('media');
+
   const loginFlowContext = getContext<LoginContext>('loginFlow');
   const loginFlowData = loginFlowContext.loginFlowData;
-  const { deviceId } = getContext<MediaContext>('media');
   const { goto } = getContext<HashbrownContext>('router');
 
+  let confirmed = false;
   let itsTooLong = false;
   let keepScanning = true;
+
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
   onDestroy(() => (keepScanning = false));
 
-  onMount(async () => {
+  const confirmLoginAction = async () => {
+    confirmed = true;
     keepScanning = true;
+
+    loading.start();
+
+    setTimeout(() => {
+      itsTooLong = true;
+    }, 15 * 1000);
+
+    const login = async () => {
+      const credentials = await identities.credentialsFor($loginFlowData.id, $loginFlowData.state);
+      const url = new URL($loginFlowData.callbackUrl);
+      const prefix = await identities.getPrefix(credentials.name);
+      const data = {
+        signed: btoa(credentials.signed),
+        domain: btoa(credentials.name),
+        deviceId: btoa(prefix),
+        publicKey: btoa(credentials.publicKey),
+      };
+
+      url.hash = btoa(JSON.stringify(data));
+      loginFlowContext.clear();
+
+      window.location.href = url.toString();
+    };
+
+    while (keepScanning) {
+      const isFingerprintValid = await identities.verifyFingerprintFor($loginFlowData.id);
+      if (isFingerprintValid) {
+        loading.stop();
+        await login();
+        break;
+      } else {
+        await sleep(2000);
+      }
+    }
+  };
+  onMount(async () => {
     if (!$loginFlowData.state) {
       goto('/list');
       return;
@@ -38,43 +79,16 @@
       goto(`/create`);
       return;
     }
-    loading.start();
-
-    setTimeout(() => {
-      itsTooLong = true;
-    }, 15 * 1000);
-
-    const login = () => {
-      const url = new URL($loginFlowData.callbackUrl);
-      const data = {
-        signed: btoa(credentials.signed),
-        domain: btoa(credentials.name),
-        deviceId: btoa(deviceId),
-        publicKey: btoa(credentials.publicKey),
-      };
-
-      url.hash = btoa(JSON.stringify(data));
-      loginFlowContext.clear();
-
-      window.location.href = url.toString();
-    };
-
-    while (keepScanning) {
-      const isFingerprintValid = await identities.verifyFingerprintFor($loginFlowData.id);
-      if (isFingerprintValid) {
-        loading.stop();
-        login();
-        break;
-      } else {
-        await sleep(2000);
-      }
-    }
   });
 </script>
 
 <h1 class="text-roboto-mono text-variant-huge text-weight-medium">Log in</h1>
 <div class="container" style="display: flex; align-items: center; justify-content: space-between">
-  {#if itsTooLong === true}
+  {#if !confirmed}
+    <div class="confirm {$media.classNames}">
+      <Button variant="primary" onClick={confirmLoginAction}>Continue</Button>
+    </div>
+  {:else if itsTooLong === true}
     <div class="text-roboto-mono text-variant-medium text-weight-medium">
       Your record might be cached. <br />
       Please wait up to 1 minute or you can <br />
