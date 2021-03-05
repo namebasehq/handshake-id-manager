@@ -1,5 +1,4 @@
 <script lang="ts" context="module">
-  import BackArrow from '@components/BackArrow.svelte';
   import Button from '@components/Button.svelte';
   import DomainNameWithPunycode from '@components/DomainNameWithPunycode.svelte';
   import TrashCan from '@components/TrashCan.svelte';
@@ -20,19 +19,15 @@
   const { deviceId } = getContext<MediaContext>('media');
   const { goto } = getContext<HashbrownContext>('router');
 
-  const {
-    delete: deleteIdentity,
-    list: identities,
-    credentialsFor,
-  } = getContext<IdentitiesContext>('identities');
+  const { delete: deleteIdentity, list: identities } = getContext<IdentitiesContext>('identities');
 
   const confirmAndDelete = (name: string) => {
     if (window.confirm(CONFIRM_DELETE_TEXT)) deleteIdentity(name);
   };
+
   const copyRecordToClipboard = async (identity: IIdentity) => {
     const identityParts = `${identity.name}`.split('.');
 
-    const tld = identityParts.pop();
     const host = [deviceId, '_auth', ...identityParts].join('.');
     const records = [
       {
@@ -42,8 +37,10 @@
         value: `v=0;fingerprint=${identity.fingerprint}`,
       },
     ];
+
     navigator.clipboard.writeText(JSON.stringify(records));
   };
+
   const loginWithExisting = async (name: string) => {
     loginFlowDataContext.setName(name);
     goto(`/#/login`);
@@ -55,19 +52,11 @@
   };
 </script>
 
-<Button
-  onClick={() => window.history.back()}
-  style="position: absolute; top: -8px; left: 8px;"
-  variant="transparent"
->
-  <BackArrow />
-</Button>
-
 <h1 class="text-roboto-mono text-variant-huge text-weight-medium">Your identities</h1>
 <ul>
   {#each $identities as identity}
     <li>
-      {#if !$loginFlowData?.state}
+      {#if !$loginFlowData || !$loginFlowData.state}
         <div
           class="color-white text-roboto-variable text-variant-small text-weight-medium"
           on:click={() => copyRecordToClipboard(identity)}

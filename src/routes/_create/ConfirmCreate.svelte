@@ -1,18 +1,12 @@
 <script lang="ts" context="module">
   import Button from '@components/Button.svelte';
   import DomainNameWithPunycode from '@components/DomainNameWithPunycode.svelte';
-  import TextInput from '@components/TextInput.svelte';
-  import { Link } from '@Hashbrown';
   import type { IdentitiesContext } from '@providers/identities';
   import type { LoadingContext } from '@providers/loading';
   import type { LoginContext } from '@providers/loginFlow';
   import type { MediaContext } from '@providers/media';
-  import { getContext, onMount } from 'svelte';
-
-  enum Stages {
-    ENTER_DETAILS = 'enterDetails',
-    CONFIRM_DETAILS = 'confirmDetails',
-  }
+  import { getContext } from 'svelte';
+  import CreateHeader from './CreateHeader.svelte';
 
   const HOST = () => window.location.host;
   const PROTOCOL = () => window.location.protocol;
@@ -30,40 +24,22 @@
 </script>
 
 <script lang="ts">
-  const loginFlowContext = getContext<LoginContext>('loginFlow');
-  const loadingContext = getContext<LoadingContext>('loading');
-
-  const identities = getContext<IdentitiesContext>('identities');
   const { media } = getContext<MediaContext>('media');
+  const identities = getContext<IdentitiesContext>('identities');
+  const loadingContext = getContext<LoadingContext>('loading');
+  const loginFlowContext = getContext<LoginContext>('loginFlow');
+
   const loginFlowData = loginFlowContext.loginFlowData;
 
-  let { list } = identities;
-  let stage: Stages = Stages.ENTER_DETAILS;
   let loading: boolean = false;
-  let firstTimeUser: boolean = true;
-  let identityToCreate: string = $loginFlowData.id;
   let identityCreated: boolean = false;
-  onMount(() => {
-    if ($loginFlowData.id) {
-      identityToCreate = $loginFlowData.id;
-      continueToConfirm();
-    }
-  });
-  $: if ($list.length !== 0) firstTimeUser = false;
-
-  const continueToConfirm = async () => {
-    loginFlowContext.setName(normalizeDomainName(identityToCreate));
-    stage = Stages.CONFIRM_DETAILS;
-  };
+  let identityToCreate: string = $loginFlowData.id;
 
   const getRedirectUrl = (name: string, state: string, callbackUrl: string): string => {
     let redirectUrl: string = `${PROTOCOL()}//${HOST()}/#/login?id=${btoa(name)}`;
-    if (state) {
-      redirectUrl += `&state=${btoa(state)}`;
-    }
-    if (callbackUrl) {
-      redirectUrl += `&callbackUrl=${btoa(callbackUrl)}`;
-    }
+
+    if (state) redirectUrl += `&state=${btoa(state)}`;
+    if (callbackUrl) redirectUrl += `&callbackUrl=${btoa(callbackUrl)}`;
 
     return redirectUrl.toString();
   };
@@ -115,7 +91,6 @@
     identityCreated = true;
     const identityParts = `${identity.name}`.split('.');
 
-    const tld = identityParts.pop();
     const prefix = await identities.getPrefix(identity.name);
     const host = [prefix, '_auth', ...identityParts].join('.');
     const records = [
@@ -126,89 +101,48 @@
         value: `v=0;fingerprint=${identity.fingerprint}`,
       },
     ];
+
     navigator.clipboard.writeText(JSON.stringify(records));
   };
 </script>
 
-<h1 class="text-roboto-mono text-variant-huge text-weight-medium">Set up a new identity</h1>
-<div style="display: flex; align-items: center; justify-content: space-between">
-  <label for="new-id" class="text-roboto-mono text-variant-small text-weight-medium">
-    Your Handshake name
-  </label>
-  {#if $list.length && !firstTimeUser}
-    <Link class="list-link text-roboto-variable text-variant-tiny text-weight-medium" to={`/list`}>
-      Select a different identity
-    </Link>
+<CreateHeader />
+<div class="input text-variant-small text-roboto-variable text-weight-regular">
+  <DomainNameWithPunycode domainName={identityToCreate} />
+</div>
+<div class="continue to-namebase {$media.classNames}">
+  <Button variant="primary" onClick={continueToNamebase} disabled={loading}>
+    Continue to Namebase
+  </Button>
+</div>
+<div class="set-manually {$media.classNames}">
+  <p class="text-variant-regular text-roboto-variable text-weight-medium">
+    Handshake name not in Namebase?
+  </p>
+  <p class="text-variant-tiny text-roboto-variable text-weight-regular ">
+    See our <a
+      rel="noopener noreferrer"
+      href="https://docs.namebase.io/handshake-login/using-handshake-login"
+      class="text-weight-medium"
+      target="_blank"
+      >instructions for setting the record outside of Namebase.
+    </a>
+  </p>
+  <p class="text-variant-tiny text-roboto-variable text-weight-regular">
+    Click the button below to copy your record, then click it again after you have set it.
+  </p>
+  {#if identityCreated}
+    <Button onClick={continueToLogin} variant="secondary" disabled={loading}>
+      I set my record
+    </Button>
+  {:else}
+    <Button onClick={createAndCopyRecord} variant="secondary" disabled={loading}>
+      Copy my record
+    </Button>
   {/if}
 </div>
-{#if stage === Stages.ENTER_DETAILS}
-  <div class="input">
-    <TextInput
-      id="new-id"
-      name="new-id"
-      bind:value={identityToCreate}
-      placeholder="Enter a Handshake name that you own*"
-    />
-  </div>
-  <div class="continue to-confirm {$media.classNames}">
-    <Button variant="primary" onClick={() => continueToConfirm()} disabled={!identityToCreate}>
-      Continue
-    </Button>
-  </div>
-{:else if stage === Stages.CONFIRM_DETAILS}
-  <!-- <Button
-    onClick={() => (stage = Stages.ENTER_DETAILS)}
-    style="position: absolute; top: -8px; left: 8px;"
-    variant="transparent"
-  >
-    <BackArrow />
-  </Button> -->
-  <div class="input text-variant-small text-roboto-variable text-weight-regular">
-    <DomainNameWithPunycode domainName={identityToCreate} />
-  </div>
-  <div class="continue to-namebase {$media.classNames}">
-    <Button variant="primary" onClick={continueToNamebase} disabled={loading}>
-      Continue to Namebase
-    </Button>
-  </div>
-  <div class="set-manually {$media.classNames}">
-    <p class="text-variant-regular text-roboto-variable text-weight-medium">
-      Handshake name not in Namebase?
-    </p>
-    <p class="text-variant-tiny text-roboto-variable text-weight-regular ">
-      See our <a
-        rel="noopener noreferrer"
-        href="https://docs.namebase.io/handshake-login/using-handshake-login"
-        class="text-weight-medium"
-        target="_blank"
-        >instructions for setting the record outside of Namebase.
-      </a>
-    </p>
-    <p class="text-variant-tiny text-roboto-variable text-weight-regular">
-      Click the button below to copy your record, then click it again after you have set it.
-    </p>
-    {#if identityCreated}
-      <Button onClick={continueToLogin} variant="secondary" disabled={loading}>
-        I set my record
-      </Button>
-    {:else}
-      <Button onClick={createAndCopyRecord} variant="secondary" disabled={loading}>
-        Copy my record
-      </Button>
-    {/if}
-  </div>
-{/if}
 
 <style>
-  h1 {
-    text-align: center;
-    margin-bottom: 48px;
-  }
-  h1,
-  label {
-    color: var(--color-white);
-  }
-
   .input {
     margin-top: 16px;
     margin-bottom: 24px;
@@ -220,16 +154,6 @@
     margin-top: 8px;
     white-space: nowrap;
     text-overflow: ellipsis;
-  }
-
-  :global(.list-link) {
-    color: var(--color-grey60);
-    text-decoration: underline;
-  }
-
-  :global(.list-link:hover),
-  :global(.list-link:active) {
-    color: var(--color-white);
   }
 
   .continue {

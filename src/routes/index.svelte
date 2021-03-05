@@ -1,13 +1,9 @@
 <script lang="ts" context="module">
   import { Route, Router } from '@Hashbrown';
-  import { onMount } from 'svelte';
-  import Create from './_create/index.svelte';
+  import ConfirmCreate from './_create/ConfirmCreate.svelte';
+  import CreateEnterDetails from './_create/CreateEnterDetails.svelte';
   import List from './_list/index.svelte';
   import Login from './_login/index.svelte';
-</script>
-
-<script>
-  onMount(async () => {});
 </script>
 
 <svelte:head>
@@ -19,7 +15,10 @@
     <Login />
   </Route>
   <Route path="/create">
-    <Create />
+    <CreateEnterDetails />
+  </Route>
+  <Route path="/create/confirm">
+    <ConfirmCreate />
   </Route>
   <Route path="/list">
     <List />
