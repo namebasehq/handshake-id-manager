@@ -24,7 +24,4 @@
   <Route path="/list">
     <List />
   </Route>
-  <Route path="/">
-    <List />
-  </Route>
 </Router>
