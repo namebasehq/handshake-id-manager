@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
   import Button from '@components/Button.svelte';
+  import DomainNameWithPunycode from '@components/DomainNameWithPunycode.svelte';
   import type { HashbrownContext } from '@Hashbrown';
   import type { IdentitiesContext } from '@providers/identities';
   import type { LoadingContext } from '@providers/loading';
@@ -24,7 +25,6 @@
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-  onDestroy(() => (keepScanning = false));
 
   const confirmLoginAction = async () => {
     confirmed = true;
@@ -80,9 +80,16 @@
       return;
     }
   });
+  onDestroy(() => {
+    keepScanning = false;
+    loading.stop();
+  });
 </script>
 
 <h1 class="text-roboto-mono text-variant-huge text-weight-medium">Log in</h1>
+<h2 class="text-roboto-mono text-variant-regular text-weight-medium">
+  Your Handshake name: <DomainNameWithPunycode domainName={$loginFlowData.id} />
+</h2>
 <div class="container" style="display: flex; align-items: center; justify-content: space-between">
   {#if !confirmed}
     <div class="confirm {$media.classNames}">
@@ -92,7 +99,7 @@
     <div class="text-roboto-mono text-variant-medium text-weight-medium">
       Your record might be cached. <br />
       Please wait up to 1 minute or you can <br />
-      <a href="/#/create">recreate your identity here.</a>
+      <a href="/#/create-confirm">recreate your identity here.</a>
     </div>
   {:else}
     <div class="text-roboto-mono text-variant-medium text-weight-medium">One moment please...</div>
@@ -100,7 +107,8 @@
 </div>
 
 <style>
-  h1 {
+  h1,
+  h2 {
     color: var(--color-white);
     text-align: center;
     margin-bottom: 48px;
