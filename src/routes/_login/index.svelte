@@ -99,7 +99,7 @@
     <div class="text-roboto-mono text-variant-medium text-weight-medium">
       Your record might be cached. <br />
       Please wait up to 1 minute or you can <br />
-      <a href="/#/create-confirm">recreate your identity here.</a>
+      <a href="/#/create/confirm">recreate your identity here.</a>
     </div>
   {:else}
     <div class="text-roboto-mono text-variant-medium text-weight-medium">One moment please...</div>
