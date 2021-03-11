@@ -64,3 +64,7 @@ signAndGetpublicKey(name: string, hnsRandom: string)
 
 Ask in the Namer Community Discord's
 https://discord.com/invite/V3aTrkp
+
+## Notes
+
+Handshake Login is still experimental and will require rigorous security review before being used for production applications (ie. don’t ask your bank to support Handshake login just yet)
