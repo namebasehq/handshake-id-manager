@@ -19,7 +19,9 @@
   const { deviceId } = getContext<MediaContext>('media');
   const { goto } = getContext<HashbrownContext>('router');
 
-  const { delete: deleteIdentity, list: identities } = getContext<IdentitiesContext>('identities');
+  const { delete: deleteIdentity, list: identities, getPrefix } = getContext<IdentitiesContext>(
+    'identities',
+  );
 
   const confirmAndDelete = (name: string) => {
     if (window.confirm(CONFIRM_DELETE_TEXT)) deleteIdentity(name);
@@ -28,7 +30,8 @@
   const copyRecordToClipboard = async (identity: IIdentity) => {
     const identityParts = `${identity.name}`.split('.');
 
-    const host = [deviceId, '_auth', ...identityParts].join('.');
+    const prefix = await getPrefix(identity.name);
+    const host = [prefix, '_auth', ...identityParts].join('.');
     const records = [
       {
         host,
