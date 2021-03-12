@@ -4,6 +4,8 @@
   import CreateEnterDetails from './_create/CreateEnterDetails.svelte';
   import List from './_list/index.svelte';
   import Login from './_login/index.svelte';
+
+  console.info('Handhshake Login v1.0');
 </script>
 
 <svelte:head>
